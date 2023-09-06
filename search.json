@@ -7,24 +7,17 @@
     "text": "About this blog"
   },
   {
-    "objectID": "posts/post-with-code/index.html",
-    "href": "posts/post-with-code/index.html",
-    "title": "Post With Code",
-    "section": "",
-    "text": "This is a post with executable code."
-  },
-  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "epinzur.github.io",
     "section": "",
-    "text": "Post With Code\n\n\n\n\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\n\n\n\n\nSep 6, 2023\n\n\nHarlow Malloc\n\n\n\n\n\n\n  \n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\n\n\nSep 3, 2023\n\n\nTristan O’Malley\n\n\n\n\n\n\nNo matching items"
+    "text": "First Post\n\n\n\n\n\n\n\nbunny\n\n\n\n\n\n\n\n\n\n\n\nSep 9, 2023\n\n\nEric Pinzur\n\n\n\n\n\n\nNo matching items"
   },
   {
-    "objectID": "posts/welcome/index.html",
-    "href": "posts/welcome/index.html",
-    "title": "Welcome To My Blog",
+    "objectID": "posts/first-notebook/first-notebook.html",
+    "href": "posts/first-notebook/first-notebook.html",
+    "title": "First Post",
     "section": "",
-    "text": "This is the first post in a Quarto blog. Welcome!\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
+    "text": "Here is an example first post\nIn this notebook, I’ll do some things\n\nInstall some stuff\nWrite a script\nRun it\nShow a picture\n\nFirst lets install the libraries we will use below.\n\n\nCode\n%pip install pyfiglet\n\n\nCollecting pyfiglet\n  Downloading pyfiglet-0.8.post1-py2.py3-none-any.whl (865 kB)\n     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 865.8/865.8 kB 7.6 MB/s eta 0:00:00a 0:00:01\nInstalling collected packages: pyfiglet\nSuccessfully installed pyfiglet-0.8.post1\nNote: you may need to restart the kernel to use updated packages.\n\n\n\n\nCode\nimport pyfiglet\n\n# Text to be converted to ASCII art\ntext = \"First Post\"\n\n# Generate ASCII art\nascii_art = pyfiglet.figlet_format(text)\n\n# Print the ASCII art\nprint(ascii_art)\n\n\n _____ _          _     ____           _   \n|  ___(_)_ __ ___| |_  |  _ \\ ___  ___| |_ \n| |_  | | '__/ __| __| | |_) / _ \\/ __| __|\n|  _| | | |  \\__ \\ |_  |  __/ (_) \\__ \\ |_ \n|_|   |_|_|  |___/\\__| |_|   \\___/|___/\\__|\n                                           \n\n\n\n\n\n\nBunny"
   }
 ]
