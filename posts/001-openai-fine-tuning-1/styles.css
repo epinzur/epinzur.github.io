@@ -1,6 +1,8 @@
 .tokenizer-tkn {
     display: inline-block;
-    white-space: pre
+    white-space: pre;
+    font-family: var(--bs-font-monospace);
+    font-size: 0.875em;
 }
 
 .tokenizer-tkn-0 {
