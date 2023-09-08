@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Eric Pinzur">
+<meta name="dcterms.date" content="2023-09-08">
+
+<title>epinzur.github.io - (draft) OpenAI - Intro to Fine-Tuning Models</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-fixed fullcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">epinzur.github.io</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html" rel="" target="">
+ <span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/epinzur" rel="" target=""><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/epinzur" rel="" target=""><i class="bi bi-linkedin" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">(draft) OpenAI - Intro to Fine-Tuning Models</h1>
+<p class="subtitle lead">Data Science for non Data Scientists</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">chat-gpt</div>
+    <div class="quarto-category">fine-tuning</div>
+    <div class="quarto-category">gen-ai</div>
+    <div class="quarto-category">kaskada</div>
+    <div class="quarto-category">python</div>
+    <div class="quarto-category">open-ai</div>
+  </div>
+  </div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Eric Pinzur </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">September 8, 2023</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="intro" class="level2">
+<h2 class="anchored" data-anchor-id="intro">Intro</h2>
+<p>First I’d like to say that I am not a Data Scientist. I’ve worked with a few Data Scientists in the past, but my knowledge in the space is limited. With the advent of high-quality large language models (LLMs), software engineers like me can now do Data Science with little-to-no Data Science background.</p>
+<p>In this post, I’m going to discuss my learnings around fine-tuning OpenAI GPT models. As an example, I’ll use my work on <a href="https://github.com/kaskada-ai/beep-gpt">BeepGPT</a>, where I fine-tuned a model to predict which conversations might be interesting to users of a Slack workspace.</p>
+<p>We’ll cover the following topics in detail below:</p>
+<ul>
+<li>Building Training Examples</li>
+<li>Refining Training Examples</li>
+<li>Model Fine-Tuning</li>
+<li>Model Validation</li>
+</ul>
+<section id="a-few-tips-before-we-get-started" class="level4">
+<h4 class="anchored" data-anchor-id="a-few-tips-before-we-get-started">A few tips before we get started</h4>
+<p>First is a willingness to experiment. Model fine-turing is an iterative process. Most likely the first way you will build your training examples will not produce a successful model. When working on BeepGPT I experimented with five different scenarios (over a week) before I found one that was successful at predicting user interest.</p>
+<p>Second is the importance of data quality. When fine-tuning a model, numerous training examples are sent to a model to update its behavior. The examples must contain strong signals that relate to the desired output. Despite the major advances made recently with LLMs, garbage in still leads to garbage out.</p>
+<p>Finally it is important to have many training examples. Ideally a fine tuning job should be run with at least a few thousand training examples. The more examples that you can provide to the model, the more it can learn, and the better the predictions will be in production.</p>
+</section>
+</section>
+<section id="definitions" class="level2">
+<h2 class="anchored" data-anchor-id="definitions">Definitions</h2>
+<p>Here are a few concepts that you should understand before continuing…</p>
+<section id="tokens" class="level4">
+<h4 class="anchored" data-anchor-id="tokens">Tokens</h4>
+<p>OpenAI’s models process text as tokens instead of as characters. Tokens represent sets of characters that commonly occur in a certain sequence. On average, a token represents about four characters. You can use <a href="https://platform.openai.com/tokenizer">OpenAI’s tokenizer tool</a> to see how different texts get converted into tokens, for example:</p>
+<blockquote class="blockquote">
+<p>
+<span class="tokenizer-tkn tokenizer-tkn-0" title="15592">Team</span><span class="tokenizer-tkn tokenizer-tkn-1" title="750"> did</span><span class="tokenizer-tkn tokenizer-tkn-2" title="345"> you</span><span class="tokenizer-tkn tokenizer-tkn-3" title="2883"> enjoy</span><span class="tokenizer-tkn tokenizer-tkn-4" title="262"> the</span><span class="tokenizer-tkn tokenizer-tkn-0" title="299"> n</span><span class="tokenizer-tkn tokenizer-tkn-1" title="620">ach</span><span class="tokenizer-tkn tokenizer-tkn-2" title="418">os</span><span class="tokenizer-tkn tokenizer-tkn-3" title="7415"> yesterday</span><span class="tokenizer-tkn tokenizer-tkn-4" title="30">?</span>
+</p>
+<p>The color highlighting shows how 41 characters becomes 10 tokens.</p>
+<p>You can mouseover to see the actual token values.</p>
+</blockquote>
+<p>Common words and most positive integers under 1000 equate to a single token. Whitespace and capitalization matter. <code> Team</code>, <code> team</code>, <code>Team</code>, and <code>team</code> equate to 4 different tokens.</p>
+</section>
+<section id="prompts-completions" class="level4">
+<h4 class="anchored" data-anchor-id="prompts-completions">Prompts &amp; Completions</h4>
+<p>Prompts are the input to LLM models. When working with ChatGPT, the prompt is the question we ask the model.</p>
+<p>Completions are the responses from LLM models. When working with ChatGPT, the completion is the model’s answer to our question.</p>
+</section>
+<section id="training-examples" class="level4">
+<h4 class="anchored" data-anchor-id="training-examples">Training Examples</h4>
+<p>Training examples are prompt &amp; completion pairs. The prompt is the text we would have sent the model in production, and the completion is the response we would have expected back.</p>
+</section>
+<section id="maximum-token-length" class="level4">
+<h4 class="anchored" data-anchor-id="maximum-token-length">Maximum Token Length</h4>
+<p>The maximum length of an API request to a model, in tokens. This includes both the prompt and completion. Depending on the model, there is a different maximum length. For fine-tuning, we need to make sure that each training example is less than this size.</p>
+</section>
+</section>
+<section id="building-training-examples" class="level2">
+<h2 class="anchored" data-anchor-id="building-training-examples">Building Training Examples</h2>
+<section id="hypothesis-generation" class="level4">
+<h4 class="anchored" data-anchor-id="hypothesis-generation">Hypothesis generation</h4>
+<p>Before we start building training examples, you need to form hypotheses about what you want to predict and how you might do so successfully. This is where the iterative process starts.</p>
+<p>For BeepGPT I experimented with the following ideas:</p>
+<ul>
+<li>For a set of recent messages in a channel, try to predict:
+<ul>
+<li>The reaction (if any) to the most recent message</li>
+<li>The next user that will reply</li>
+<li>The set of users that might interact next (reply or react)</li>
+</ul></li>
+<li>For the set of recent messages in a conversation, try to predict:
+<ul>
+<li>The set of users that might interact next</li>
+<li>The next user that will reply</li>
+</ul></li>
+</ul>
+<p>I was most successful at fine-tuning a model for the final idea: For the set of recent messages in a conversation, predict the next user to reply. The rest of the post will focus on this.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>I used <a href="https://kaskada.io">Kaskada</a> to quickly iterate on these ideas. Kaskada is a tool that makes it easy to collect and aggregate events from raw data. You don’t need to pre-process anything. Just import the raw events and start experimenting. Furthermore Kaskada ensures that your examples will not be subject to leakage, which is a big problem in predictive modeling. In a future post, I’ll show how I used Kaskada to generate training examples for each of the ideas presented above.</p>
+</div>
+</div>
+</section>
+<section id="consider-this-example-conversation" class="level4">
+<h4 class="anchored" data-anchor-id="consider-this-example-conversation">Consider this example conversation:</h4>
+<div class="hanging-indent margin-0">
+<p><strong>UserA</strong>: Team did you enjoy the nachos yesterday?</p>
+<p><strong>UserB</strong>: Yes, I love mexican food.</p>
+<p><strong>UserA</strong>: &lt;<span class="citation" data-cites="UserC">(<a href="#ref-UserC" role="doc-biblioref"><strong>UserC?</strong></a>)</span>&gt; I’m trying to get my application deployed in Kubernetes. However, I can’t seem to figure out if I should use a deployment or a stateful set. I found some docs here: http://tinyurl.com/4k53dc8h but I’m still not sure which to choose. Can you help?</p>
+<p><strong>UserB</strong>: UserC is at lunch now. They will be back in about an hour. I don’t know much about this either, but I can try to help. Or is it okay to wait until UserC is back?</p>
+<p><strong>UserA</strong>: I can wait for UserC to get back.</p>
+<p><strong>UserC</strong>: I can help with this. Can you tell me more about your application? Does it have any persistent storage requirements?</p>
+</div>
+</section>
+<section id="training-example-construction" class="level4">
+<h4 class="anchored" data-anchor-id="training-example-construction">Training example construction</h4>
+<p>If we just look at the first two messages, we can generate a training example. The prompt is the first message, and the completion is the user that responded.</p>
+<ul>
+<li><strong>Prompt</strong>: “Team did you enjoy the nachos yesterday?”</li>
+<li><strong>Completion</strong>: “UserB”</li>
+</ul>
+<p>Instead if we consider the last 4 messages (we use two new-line characters to join messages):</p>
+<ul>
+<li><strong>Prompt</strong>: “&lt;<span class="citation" data-cites="UserC">(<a href="#ref-UserC" role="doc-biblioref"><strong>UserC?</strong></a>)</span>&gt; I’m trying to get my application deployed in Kubernetes. However, I can’t seem to figure out if I should use a deployment or a stateful set. I found some docs here: http://tinyurl.com/4k53dc8h but I’m still not sure which to choose. Can you help?is at lunch now. They will be back in about an hour. I don’t know much about this either, but I can try to help. Or is it okay to wait until UserC is back?can wait for UserC to get back.”</li>
+<li><strong>Completion</strong>: “UserC”</li>
+</ul>
+<p>The combination of the prompt and the completion is a training example. When using the OpenAI fine-tuning API, each training example should be a blob of json in a specific format on a single line.</p>
+<p>Converting our two examples above, we now have:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode json code-overflow-wrap code-with-copy"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span><span class="dt">"prompt"</span><span class="fu">:</span><span class="st">"Team did you enjoy the nachos yesterday?"</span><span class="fu">,</span> <span class="dt">"completion"</span><span class="fu">:</span><span class="st">"UserB"</span><span class="fu">}</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span><span class="dt">"prompt"</span><span class="fu">:</span><span class="st">"&lt;@UserC&gt; I'm trying to get my application deployed in Kubernetes. However, I can't seem to figure out if I should use a deployment or a stateful set. I found some docs here: http://tinyurl.com/4k53dc8h but I'm still not sure which to choose. Can you help?</span><span class="ch">\n\n</span><span class="st">UserC is at lunch now. They will be back in about an hour. I don't know much about this either, but I can try to help. Or is it okay to wait until UserC is back?</span><span class="ch">\n\n</span><span class="st">I can wait for UserC to get back."</span><span class="fu">,</span> <span class="dt">"completion"</span><span class="fu">:</span><span class="st">"UserC"</span><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="formatting-examples" class="level4">
+<h4 class="anchored" data-anchor-id="formatting-examples">Formatting examples</h4>
+<p>Next, there are several formatting rules that you are recommended to follow. I don’t understand why these are recommended but I followed them anyway.</p>
+<ul>
+<li>All prompts should end with the same set of characters. The set of characters used should not occur elsewhere in your dataset. The recommended string for textual input data is <code>\n\n###\n\n</code>.</li>
+<li>All completions should start with a single whitespace character.</li>
+</ul>
+<p>Applying these rules to our examples, we get:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode json code-overflow-wrap code-with-copy"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span><span class="dt">"prompt"</span><span class="fu">:</span><span class="st">"Team did you enjoy the nachos yesterday?</span><span class="ch">\n\n</span><span class="st">###</span><span class="ch">\n\n</span><span class="st">"</span><span class="fu">,</span> <span class="dt">"completion"</span><span class="fu">:</span><span class="st">" UserB"</span><span class="fu">}</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span><span class="dt">"prompt"</span><span class="fu">:</span><span class="st">"&lt;@UserC&gt; I'm trying to get my application deployed in Kubernetes. However, I can't seem to figure out if I should use a deployment or a stateful set. I found some docs here: http://tinyurl.com/4k53dc8h but I'm still not sure which to choose. Can you help?</span><span class="ch">\n\n</span><span class="st">UserC is at lunch now. They will be back in about an hour. I don't know much about this either, but I can try to help. Or is it okay to wait until UserC is back?</span><span class="ch">\n\n</span><span class="st">I can wait for UserC to get back.</span><span class="ch">\n\n</span><span class="st">###</span><span class="ch">\n\n</span><span class="st">"</span><span class="fu">,</span> <span class="dt">"completion"</span><span class="fu">:</span><span class="st">" UserC"</span><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="training-example-cleanup" class="level4">
+<h4 class="anchored" data-anchor-id="training-example-cleanup">Training example cleanup</h4>
+<p>Finally I found that model training works best if the following is done:</p>
+<ul>
+<li>Non-textual data like http-links, code blocks, and ids are removed from the prompts.</li>
+<li>Completions are reduced to a single token in length.</li>
+</ul>
+<p>We can use regex and other string functions to remove non-textual data from the prompts. And we can use standard data science tools like the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html">Scikit-Learn LabelEncoder</a> to create a mapping from UserIds to integers. Remember that positive integers under one thousand map to unique tokens in OpenAI.</p>
+<p>So now we have:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode json code-overflow-wrap code-with-copy"><code class="sourceCode json"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span><span class="dt">"prompt"</span><span class="fu">:</span><span class="st">"Team did you enjoy the nachos yesterday?</span><span class="ch">\n\n</span><span class="st">###</span><span class="ch">\n\n</span><span class="st">"</span><span class="fu">,</span> <span class="dt">"completion"</span><span class="fu">:</span><span class="st">" 1"</span><span class="fu">}</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span><span class="dt">"prompt"</span><span class="fu">:</span><span class="st">"I'm trying to get my application deployed in Kubernetes. However, I can't seem to figure out if I should use a deployment or a stateful set. I found some docs here: but I'm still not sure which to choose. Can you help?</span><span class="ch">\n\n</span><span class="st">UserC is at lunch now. They will be back in about an hour. I don't know much about this either, but I can try to help. Or is it okay to wait until UserC is back?</span><span class="ch">\n\n</span><span class="st">I can wait for UserC to get back.</span><span class="ch">\n\n</span><span class="st">###</span><span class="ch">\n\n</span><span class="st">"</span><span class="fu">,</span> <span class="dt">"completion"</span><span class="fu">:</span><span class="st">" 2"</span><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>I found that removing ids was especially important. Before I did so, the model essentially learned how to map from input UserId to output user. It skipped learning anything useful from the actual text of the messages.</p>
+</div>
+</div>
+<p>We now have 2 training examples that we could use for fine-tuning a model.</p>
+<p>For fine-tuning we should have several thousand examples. Using a tool like <a href="https://kaskada.io">Kaskada</a>, it should be relatively easy to generate examples like this from your full slack history.</p>
+</section>
+</section>
+<section id="refining-training-examples" class="level2">
+<h2 class="anchored" data-anchor-id="refining-training-examples">Refining Training Examples</h2>
+<p>Before proceeding with fine-tuning, I recommend the taking the following steps:</p>
+<ol type="1">
+<li>Use the ChatCompletion API to determine which examples contain enough signal to be useful</li>
+<li>Use the OpenAI CLI to validate the training examples are in the correct format.</li>
+</ol>
+<section id="determining-example-signal-strength" class="level4">
+<h4 class="anchored" data-anchor-id="determining-example-signal-strength">Determining Example Signal Strength</h4>
+<p>I recommend you ensure each example contains a strong enough signal for predicting your desired outcome. If an example doesn’t have enough signal, you should consider excluding it from your training set.</p>
+<p>Depending on your goal, it may be also helpful to include some negative examples. Negative examples help train the model about when to not make a prediction, or stated another way, about when to predict that no action should be taken.</p>
+<p>For example, with BeepGPT we are trying to predict when a set of messages might be interesting for a specific user. If we look at our training examples from the previous section, the first does not contain anything interesting. We would not want to alert anyone about this message. Therefore we should convert this example into a negative example.</p>
+<p>The second example does contain a strong signal. Here we would like to alert users that have answered questions about kubernetes in the past. This example should be left as is.</p>
+<p>To convert an example to a negative example, we simply need to change its completion to indicate a non-response. I chose to use <code> nil</code> for this, which is represented by a single token in OpenAI.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode json code-overflow-wrap code-with-copy"><code class="sourceCode json"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span><span class="dt">"prompt"</span><span class="fu">:</span><span class="st">"Team did you enjoy the nachos yesterday?</span><span class="ch">\n\n</span><span class="st">###</span><span class="ch">\n\n</span><span class="st">"</span><span class="fu">,</span> <span class="dt">"completion"</span><span class="fu">:</span><span class="st">" nil"</span><span class="fu">}</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span><span class="dt">"prompt"</span><span class="fu">:</span><span class="st">"I'm trying to get my application deployed in Kubernetes. However, I can't seem to figure out if I should use a deployment or a stateful set. I found some docs here: but I'm still not sure which to choose. Can you help?</span><span class="ch">\n\n</span><span class="st">UserC is at lunch now. They will be back in about an hour. I don't know much about this either, but I can try to help. Or is it okay to wait until UserC is back?</span><span class="ch">\n\n</span><span class="st">I can wait for UserC to get back.</span><span class="ch">\n\n</span><span class="st">###</span><span class="ch">\n\n</span><span class="st">"</span><span class="fu">,</span> <span class="dt">"completion"</span><span class="fu">:</span><span class="st">" 2"</span><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Instead of manually going through each generated example to determine if it should be positive or negative, we can use OpenAIs ChatGPT API to do this work for us. However we still need to review a few examples in order to provide enough information to the ChatGPT to make decisions on our behalf.</p>
+<p>Look through your generated examples and try to find 25-50 for each bucket: <strong>positive</strong> and <strong>negative</strong>. Add these to files: <code>examples_pos.jsonl</code> and <code>examples_neg.jsonl</code></p>
+<p>Positive (strong signal) examples:</p>
+<ul>
+<li>I’ve been utilizing the Rust syntax highlighter for my code blocks. It does a good job of differentiating between functions and literals.</li>
+<li>The agent doesn’t push to prometheus, this is just another proxy location that prometheus scrapes.</li>
+</ul>
+<p>Negative (weak signal) examples:</p>
+<ul>
+<li>Some very interesting ideas in here, thx for sharing</li>
+<li>Were there any issues with this? I’ll start verifying a few things in a bit.</li>
+<li>Standup?</li>
+</ul>
+<p>We will now use ChatGPT with few-shot learning to iterate over our full set of training examples and label each as positive or negative.</p>
+<p>First we will generate an instruction set for ChatGPT, by building up an array of messages in json. Each message object contains <code>role</code> and <code>content</code> properties. The <code>role</code> can be either <code>system</code>, <code>user</code>, or <code>assistant</code>.</p>
+<p>The first message should always be from the <code>system</code> role, and provide general instructions to the model of its function. Following this, message pairs of <code>user</code> and <code>assistant</code> should be added, where the <code>user</code> content is our example input and the <code>assistant</code> content is our expected response from ChatGPT. These are the “few-shot” learnings that ChatGPT uses to help it determine our desired output.</p>
+<p>Then we append a final <code>user</code> message to the instruction set that contains the content that we want to have evaluated by the model.</p>
+<p>Below is some example python code for doing this refinement. Some Notes:</p>
+<ul>
+<li>The code is written in blocks with the intention of running inside a jupyter notebook environment.</li>
+<li>If you want to run this code yourself, you will need an OpenAI API key.</li>
+<li>The code also assumes that you have a file named <code>examples.jsonl</code> which contains the full set of training examples generated above.</li>
+</ul>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#install required packages</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>pip install backoff numpy openai pandas scikit<span class="op">-</span>learn</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Note that we use the <code>backoff</code> library to retry requests that have failed due to a rate-limit error. Despite this addition, sometimes the process stalls and must be manually restarted. The code below appends to the output file instead of replacing it, so that the process can be restarted after an error occurs.</p>
+</div>
+</div>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import packages and init openAI with your API key</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> backoff, getpass, json, numpy, openai, pandas, sklearn, time</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>openai.api_key <span class="op">=</span> getpass.getpass(<span class="st">'OpenAI API Key:'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get a total count of examples in the input file</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>total_count <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="ss">f'examples.jsonl'</span>, <span class="st">'r'</span>) <span class="im">as</span> in_file:</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> line <span class="kw">in</span> in_file:</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        total_count <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># initialize a progress counter</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>success_count <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co"># build up the instruction set for few-shot learning</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co"># start with a `system` message that provides the general instructions to the model</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>system_instructions <span class="op">=</span> <span class="st">"You are a helpful assistant. Your job is to determine </span><span class="ch">\</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="st">    if a prompt will be helpful for fine-tuning a model. All prompts start with </span><span class="ch">\</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="st">    'start --&gt;' and end with: '</span><span class="ch">\\</span><span class="st">n</span><span class="ch">\\</span><span class="st">n###</span><span class="ch">\\</span><span class="st">n</span><span class="ch">\\</span><span class="st">n'. You should respond 'yes' if you </span><span class="ch">\</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="st">    think the prompt has enough context to be helpful, or 'no' if not. No </span><span class="ch">\</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="st">    explanation is needed. You should only respond with 'yes' or 'no'."</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>instructions <span class="op">=</span> [{<span class="st">"role"</span>: <span class="st">"system"</span>, <span class="st">"content"</span>: system_instructions}]</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="co"># then add the positive and negative examples that we manually pulled out of the full set</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>pos <span class="op">=</span> <span class="bu">open</span>(<span class="ss">f'examples_pos.jsonl'</span>, <span class="st">'r'</span>)</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>neg <span class="op">=</span> <span class="bu">open</span>(<span class="ss">f'examples_neg.jsonl'</span>, <span class="st">'r'</span>)</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="va">True</span>:</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>    pos_line <span class="op">=</span> pos.readline()</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>    neg_line <span class="op">=</span> neg.readline()</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="kw">not</span> pos_line) <span class="kw">or</span> (<span class="kw">not</span> neg_line):</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>    pos_data <span class="op">=</span> json.loads(pos_line)</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>    neg_data <span class="op">=</span> json.loads(neg_line)</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>    <span class="co"># alternate adding positive and negative examples</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>    instructions.append({<span class="st">"role"</span>: <span class="st">"user"</span>, <span class="st">"content"</span>: <span class="ss">f'start --&gt;</span><span class="sc">{</span>pos_data[<span class="st">"prompt"</span>]<span class="sc">}</span><span class="ss">'</span>})</span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>    instructions.append({<span class="st">"role"</span>: <span class="st">"assistant"</span>, <span class="st">"content"</span>: <span class="st">"yes"</span>})</span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>    instructions.append({<span class="st">"role"</span>: <span class="st">"user"</span>, <span class="st">"content"</span>: <span class="ss">f'start --&gt;</span><span class="sc">{</span>neg_data[<span class="st">"prompt"</span>]<span class="sc">}</span><span class="ss">'</span>})</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>    instructions.append({<span class="st">"role"</span>: <span class="st">"assistant"</span>,<span class="st">"content"</span>: <span class="st">"no"</span>})</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>pos.close()</span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>neg.close()</span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a><span class="co"># setup a method to retry requests automatically</span></span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a><span class="at">@backoff.on_exception</span>(backoff.expo, (openai.error.RateLimitError, openai.error.ServiceUnavailableError))</span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> chat_with_backoff(<span class="op">**</span>kwargs):</span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>    <span class="co"># add an additional delay, because the first retry almost always fails</span></span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>    time.sleep(<span class="dv">1</span>)</span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> openai.ChatCompletion.create(<span class="op">**</span>kwargs)</span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> openai.error.InvalidRequestError:</span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">None</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># iterate through each example, using the ChatCompletion API </span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># to determine if it contains a strong signal for fine-tuning purposes.</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># if this code block stalls, you can restart it to resume processing. </span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>count <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="ss">f'examples.jsonl'</span>, <span class="st">'r'</span>) <span class="im">as</span> in_file:</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(<span class="ss">f'examples_refined.jsonl'</span>, <span class="st">'a'</span>) <span class="im">as</span> out_file</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> line <span class="kw">in</span> in_file:</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>            count <span class="op">+=</span><span class="dv">1</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>            <span class="co"># skip examples already processed on previous runs</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> count <span class="op">&lt;</span> success_count:</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>                <span class="cf">continue</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="ss">f'Currently processing line </span><span class="sc">{</span>count<span class="sc">}</span><span class="ss"> of </span><span class="sc">{</span>total_count<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>            <span class="co"># get the next example from the file</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>            data <span class="op">=</span> json.loads(line)</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>            prompt <span class="op">=</span> data[<span class="st">"prompt"</span>]</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>            <span class="co"># add the example to a copy of the instruction set</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>            msgs <span class="op">=</span> instructions.copy()</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>            msgs.append({<span class="st">"role"</span>: <span class="st">"user"</span>, <span class="st">"content"</span>: <span class="ss">f'start --&gt;</span><span class="sc">{</span>prompt<span class="sc">}</span><span class="ss">'</span>})</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>            <span class="co"># send the request</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>            res <span class="op">=</span> chat_with_backoff(model <span class="op">=</span> <span class="st">"gpt-3.5-turbo"</span>, messages <span class="op">=</span> msgs)</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>            <span class="co"># if request failed for some reason, skip example</span></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="kw">not</span> res:</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>                <span class="cf">continue</span></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>            <span class="co"># get the response and write the example back to disk</span></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> res[<span class="st">"choices"</span>][<span class="dv">0</span>][<span class="st">"message"</span>][<span class="st">"content"</span>] <span class="op">==</span> <span class="st">"no"</span>:</span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>                <span class="co"># for negative messages, re-write the completion as ` nil`</span></span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>                data[<span class="st">"completion"</span>] <span class="op">=</span> <span class="st">" nil"</span></span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>            out_file.write(json.dumps(data) <span class="op">+</span> <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>) </span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>            out_file.flush()</span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>            <span class="co"># save progress for restart</span></span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>            success_count <span class="op">=</span> count</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled" title="Tips &amp; Warnings">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tips &amp; Warnings
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>If you get an error about too many tokens used, reduce the number of positive and negative examples in your generated instructions. Or try to summarize the positive &amp; negative examples (manually or with ChatGPT) to reduce their length.</li>
+<li>This will cost a fair amount on OpenAI. A rough estimate is $50 per 10,000 examples.</li>
+<li>This can take a long time to run to completion. The ChatCompletion API limits the number of tokens used per minute. In my experience, running 10,000 examples through this process takes about 8 hours.</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="example-validation" class="level4">
+<h4 class="anchored" data-anchor-id="example-validation">Example Validation</h4>
+<p>Finally, will use a CLI tool provide by OpenAI to perform some validation on our training examples and split them into two files. The tool does the following for us:</p>
+<ul>
+<li>makes sure all prompts end with same suffix</li>
+<li>removes examples that use too many tokens</li>
+<li>removes duplicated examples</li>
+</ul>
+<p>We can run the CLI tool directly from a python jupyter environment with the code below.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> openai <span class="im">import</span> cli</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> types <span class="im">import</span> SimpleNamespace</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>args <span class="op">=</span> SimpleNamespace(<span class="bu">file</span><span class="op">=</span><span class="st">'examples_refined.jsonl'</span>, quiet<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>cli.FineTune.prepare_data(args)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>The output of the above command should be two files:</p>
+<ul>
+<li><code>examples_refined_prepared_train.jsonl</code> -&gt; We will use this to fine-tune our model</li>
+<li><code>examples_refined_prepared_valid.jsonl</code> -&gt; We will use this to validate our fine-tuned model</li>
+</ul>
+</section>
+</section>
+<section id="model-fine-tuning" class="level2">
+<h2 class="anchored" data-anchor-id="model-fine-tuning">Model Fine-Tuning</h2>
+<p>Now that we have refined training examples, we can fine-tune a model for our purposes.</p>
+<p>To do this, we take the following steps:</p>
+<ol type="1">
+<li>Upload training data</li>
+<li>Create a fine-tuning job</li>
+<li>Wait for the job to finish</li>
+<li>Experiment with the fine-tuned model</li>
+</ol>
+<section id="upload-training-data" class="level4">
+<h4 class="anchored" data-anchor-id="upload-training-data">Upload training data</h4>
+<p>First we upload the refined examples to OpenAI. We need to make sure the file has successfully uploaded before moving onto the next step.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>training_file_name <span class="op">=</span> <span class="st">"examples_refined_prepared_train.jsonl"</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># start the file upload</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>training_file_id <span class="op">=</span> cli.FineTune._get_or_upload(training_file_name, <span class="va">True</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Poll and display the upload status until the it finishes</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="va">True</span>:</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    time.sleep(<span class="dv">2</span>)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    file_status <span class="op">=</span> openai.File.retrieve(training_file_id)[<span class="st">"status"</span>]</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Upload status: </span><span class="sc">{</span>file_status<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> file_status <span class="kw">in</span> [<span class="st">"succeeded"</span>, <span class="st">"failed"</span>, <span class="st">"processed"</span>]:</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="create-a-fine-tuning-job" class="level4">
+<h4 class="anchored" data-anchor-id="create-a-fine-tuning-job">Create a fine-tuning job</h4>
+<p>Next we create a fine-tuning job using the file_id from the upload.</p>
+<p>When doing fine-tuning, you need to choose a base model to start from. The current options are:</p>
+<ul>
+<li><code>babbage-002</code> -&gt; Capable of straightforward tasks. Very fast and low cost.</li>
+<li><code>davinci-002</code> -&gt; Most capable GPT3 model. More expensive to train and run in production.</li>
+</ul>
+<p>You also need to choose the number of epochs to train the model for. An epoch refers one full cycle through the training dataset.</p>
+<p>With the example set I was using for BeepGPT I found that 8 epochs on <code>babbage-002</code> produced a model with a similar capability as 4 on <code>davinci-002</code>. Depending on your use case you may or may not have a similar result.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>create_args <span class="op">=</span> {</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"training_file"</span>: training_file_id,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"model"</span>: <span class="st">"davinci-002"</span>,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"n_epochs"</span>: <span class="dv">4</span>,</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"suffix"</span>: <span class="st">"beep-gpt"</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the fine-tune job and retrieve the job ID</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>resp <span class="op">=</span> openai.FineTune.create(<span class="op">**</span>create_args)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>job_id <span class="op">=</span> resp[<span class="st">"id"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="wait-for-the-job-to-finish" class="level4">
+<h4 class="anchored" data-anchor-id="wait-for-the-job-to-finish">Wait for the job to finish</h4>
+<p>After the fine-tuning job has been created, we need to wait for it to start processing, and then for it to finish.</p>
+<p>Depending on the current backlog at OpenAI, I’ve seen that jobs can take up to a dozen hours to start.</p>
+<p>After the job starts successfully, you can then see its status, and wait for it to finish. This can also take a long time. When using <code>davinci-002</code> with 4 epochs, I estimate about 1 hour per 1000 training examples.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Poll and display the fine-tuning status until the it finishes</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="va">True</span>:</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    time.sleep(<span class="dv">5</span>)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    job_details <span class="op">=</span> openai.FineTune.retrieve(<span class="bu">id</span><span class="op">=</span>job_id)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Job status: </span><span class="sc">{</span>job_details[<span class="st">"status"</span>]<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Job events: </span><span class="sc">{</span>job_details[<span class="st">"events"</span>]<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> job_details[<span class="st">"status"</span>] <span class="op">==</span> <span class="st">"succeeded"</span>:</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>        model_id <span class="op">=</span> job_details[<span class="st">"fine_tuned_model"</span>]</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f'Successfully fine-tuned model with ID: </span><span class="sc">{</span>model_id<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> job_details[<span class="st">"status"</span>] <span class="kw">in</span> [<span class="st">"failed"</span>, <span class="st">"succeeded"</span>]:</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="try-using-the-fine-tuned-model" class="level4">
+<h4 class="anchored" data-anchor-id="try-using-the-fine-tuned-model">Try using the fine-tuned model</h4>
+<p>Now that we have a finished model, we can try sending a few prompts and see if it recommends alerting any users. We can use the validation file for this.</p>
+<p>See the <a href="https://platform.openai.com/docs/api-reference/completions/create">OpenAI docs</a> for info on the parameters we send to the Completion API.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># choose which row in the validation file to send</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>row <span class="op">=</span> <span class="dv">6</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>count <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="ss">f'examples_refined_prepared_valid.jsonl'</span>, <span class="st">'r'</span>) <span class="im">as</span> in_file:</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> line <span class="kw">in</span> in_file:</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>        count <span class="op">+=</span><span class="dv">1</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> count <span class="op">&lt;</span> row:</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>            <span class="cf">continue</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>        data <span class="op">=</span> json.loads(line)</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>        prompt <span class="op">=</span> data[<span class="st">"prompt"</span>]</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>        completion <span class="op">=</span> data[<span class="st">"completion"</span>]</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>        <span class="co"># this is the text we send to the model for it to </span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>        <span class="co"># determine if we should alert a user</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f'Prompt: </span><span class="sc">{</span>prompt<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>        <span class="co"># this is the user (or nil) we would have expected </span></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>        <span class="co"># for the response (from the validation file)</span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f'Completion: </span><span class="sc">{</span>completion<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>        <span class="co"># this is the response from the model. The `text` field contains </span></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>        <span class="co"># the actual prediction. The `logprobs` array contains the </span></span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>        <span class="co"># log-probability from the 5 highest potential matches.</span></span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f'Prediction:'</span>)</span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>        openai.Completion.create(model<span class="op">=</span>model_id, prompt<span class="op">=</span>prompt, max_tokens<span class="op">=</span><span class="dv">1</span>, logprobs<span class="op">=</span><span class="dv">5</span>, temperature<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+</section>
+<section id="model-validation" class="level2">
+<h2 class="anchored" data-anchor-id="model-validation">Model Validation</h2>
+<p>In order to validate your model, you can run it over the full validation data set.</p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="ss">f'examples_refined_prepared_valid.jsonl'</span>, <span class="st">'r'</span>) <span class="im">as</span> in_file:</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(<span class="ss">f'examples_refined_prepared_valid_pred.jsonl'</span>, <span class="st">'w'</span>) <span class="im">as</span> out_file:</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> line <span class="kw">in</span> in_file:</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>            pred <span class="op">=</span> openai.Completion.create(model<span class="op">=</span>model_id, prompt<span class="op">=</span>prompt, max_tokens<span class="op">=</span><span class="dv">1</span>, logprobs<span class="op">=</span><span class="dv">5</span>, temperature<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>            data[<span class="st">"prediction"</span>] <span class="op">=</span> pred</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>            out_file.write(json.dumps(data) <span class="op">+</span> <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Then use a basic data science performance measurement to check the quality of your model. In the example below, I calculate the model’s F1 Score, but you can use other performance indicators if desired.</p>
+<p>A F1 score is a measure of a model’s accuracy, and it takes into account both precision and recall.</p>
+<ul>
+<li>Precision is the number of true positive predictions divided by the total number of positive predictions. It measures how accurate the model’s positive predictions are.</li>
+<li>Recall is the number of true positive predictions divided by the total number of actual positive cases. It measures how well the model identifies positive cases.</li>
+</ul>
+<p>The F1 score is the harmonic mean of precision and recall. F1 scores ranges from 0 to 1, with a score of 1 indicating perfect precision and recall and 0 indicating poor performance. As a general rule of thumb, an F1 score with 0.7 or higher is often considered good. <span class="citation" data-cites="f1score">(<a href="#ref-f1score" role="doc-biblioref">Neri Van Otten 2023</a>)</span></p>
+<div class="cell">
+<details open="">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pandas.read_json(<span class="ss">f'examples_refined_prepared_valid_pred.jsonl'</span>, lines<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"test"</span>] <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"pred"</span>] <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(df)):</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    completions <span class="op">=</span> df[<span class="st">'completion'</span>][i].strip().split()</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    df.at[i, <span class="st">"test"</span>] <span class="op">=</span> completions</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    prediction <span class="op">=</span> df[<span class="st">'prediction'</span>][i]</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">"choices"</span> <span class="kw">in</span> prediction:</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>        predictions <span class="op">=</span> prediction[<span class="st">"choices"</span>][<span class="dv">0</span>][<span class="st">"text"</span>].strip().split()</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>        df.at[i, <span class="st">"pred"</span>] <span class="op">=</span> predictions</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df[df.pred.notnull()]</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> MultiLabelBinarizer</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>mlb <span class="op">=</span> MultiLabelBinarizer()</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>mlb.fit([[<span class="st">'nil'</span>, <span class="st">'1'</span>, <span class="st">'2'</span>, <span class="st">'5'</span>, <span class="st">'10'</span>]])</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>y_test_transformed <span class="op">=</span> mlb.transform(df[<span class="st">'test'</span>])</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>y_pred_transformed <span class="op">=</span> mlb.transform(df[<span class="st">'pred'</span>])</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> f1_score</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>f1 <span class="op">=</span> f1_score(y_test_transformed, y_pred_transformed, average<span class="op">=</span><span class="st">'macro'</span>)  <span class="co"># Or 'micro', 'weighted' based on need</span></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>f1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="conclusion-and-next-steps" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion-and-next-steps">Conclusion and Next Steps</h2>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-f1score" class="csl-entry" role="listitem">
+Neri Van Otten. 2023. <span>“F1 Score The Ultimate Guide: Formulas, Explanations, Examples, Advantages, Disadvantages, Alternatives &amp; Python Code.”</span> <a href="https://spotintelligence.com/2023/05/08/f1-score/">https://spotintelligence.com/2023/05/08/f1-score/</a>.
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
