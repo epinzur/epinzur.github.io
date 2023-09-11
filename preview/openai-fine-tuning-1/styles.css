@@ -33,3 +33,11 @@
 .margin-0 p:not(:last-child) {
     margin-bottom: 0;
 }
+
+code {
+    color: #003B4F;
+}
+
+.center {
+    text-align: center;
+}
