@@ -71,9 +71,9 @@ ul.task-list li input[type="checkbox"] {
     }
 
     const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      valueNames: ['listing-image','listing-date','listing-title','listing-reading-time','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
       
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
+      searchColumns: ["listing-date","listing-title","listing-author","listing-subtitle","listing-image","listing-description","listing-categories"],
     };
 
     window['quarto-listings'] = window['quarto-listings'] || {};
@@ -157,7 +157,7 @@ ul.task-list li input[type="checkbox"] {
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(1)</span></div><div class="category" data-category="bunny">bunny <span class="quarto-category-count">(1)</span></div></div></div>
+    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(2)</span></div><div class="category" data-category="bunny">bunny <span class="quarto-category-count">(1)</span></div><div class="category" data-category="few-shot learning">few-shot learning <span class="quarto-category-count">(1)</span></div><div class="category" data-category="fine-tuning">fine-tuning <span class="quarto-category-count">(1)</span></div><div class="category" data-category="gen-ai">gen-ai <span class="quarto-category-count">(1)</span></div><div class="category" data-category="kaskada">kaskada <span class="quarto-category-count">(1)</span></div><div class="category" data-category="llm">llm <span class="quarto-category-count">(1)</span></div><div class="category" data-category="open-ai">open-ai <span class="quarto-category-count">(1)</span></div><div class="category" data-category="python">python <span class="quarto-category-count">(1)</span></div></div></div>
 <!-- main -->
 <main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
 
@@ -170,7 +170,56 @@ ul.task-list li input[type="checkbox"] {
 
 <div class="quarto-listing quarto-listing-container-default" id="listing-listing">
 <div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="bunny" data-listing-date-sort="1693958400000" data-listing-file-modified-sort="1694619089558" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1">
+<div class="quarto-post image-right" data-index="0" data-categories="few-shot learning,fine-tuning,gen-ai,kaskada,llm,python,open-ai" data-listing-date-sort="1694563200000" data-listing-file-modified-sort="1694623314467" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="20">
+<div class="thumbnail">
+<p><a href="./posts/001-openai-fine-tuning-1/openai-fine-tuning-1.html"> <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div> </a></p>
+</div>
+<div class="body">
+<a href="./posts/001-openai-fine-tuning-1/openai-fine-tuning-1.html">
+<h3 class="no-anchor listing-title">
+Intro to Fine-Tuning Large Language Models (LLMs)
+</h3>
+<div class="listing-subtitle">
+Data Science for non Data Scientists
+</div>
+</a>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('few-shot learning'); return false;">
+few-shot learning
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('fine-tuning'); return false;">
+fine-tuning
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('gen-ai'); return false;">
+gen-ai
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('kaskada'); return false;">
+kaskada
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('llm'); return false;">
+llm
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('python'); return false;">
+python
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('open-ai'); return false;">
+open-ai
+</div>
+</div>
+<a href="./posts/001-openai-fine-tuning-1/openai-fine-tuning-1.html"> </a>
+</div>
+<div class="metadata">
+<a href="./posts/001-openai-fine-tuning-1/openai-fine-tuning-1.html">
+<div class="listing-date">
+Sep 13, 2023
+</div>
+<div class="listing-reading-time">
+20 min
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="1" data-categories="bunny" data-listing-date-sort="1693958400000" data-listing-file-modified-sort="1694623314463" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1">
 <div class="thumbnail">
 <p><a href="./posts/000-first-notebook/first-notebook.html"> <p class="card-img-top"><img src="posts/000-first-notebook/bunny.jpg"  class="thumbnail-image card-img"/></p> </a></p>
 </div>
@@ -188,19 +237,15 @@ First Post
 bunny
 </div>
 </div>
-<a href="./posts/000-first-notebook/first-notebook.html">
-<div class="listing-description">
-In this notebook, I’ll do some things
-</div>
-</a>
+<a href="./posts/000-first-notebook/first-notebook.html"> </a>
 </div>
 <div class="metadata">
 <a href="./posts/000-first-notebook/first-notebook.html">
 <div class="listing-date">
 Sep 6, 2023
 </div>
-<div class="listing-author">
-Eric Pinzur
+<div class="listing-reading-time">
+1 min
 </div>
 </a>
 </div>
