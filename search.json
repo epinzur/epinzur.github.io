@@ -7,18 +7,11 @@
     "text": "About this blog"
   },
   {
-    "objectID": "posts/000-first-notebook/first-notebook.html",
-    "href": "posts/000-first-notebook/first-notebook.html",
-    "title": "First Post",
-    "section": "",
-    "text": "Here is an example first post\nIn this notebook, I’ll do some things\n\nInstall some stuff\nWrite a script\nRun it\nShow a picture\n\nFirst lets install the libraries we will use below.\n\n\nCode\n%pip install pyfiglet\n\n\nCollecting pyfiglet\n  Downloading pyfiglet-0.8.post1-py2.py3-none-any.whl (865 kB)\n     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 865.8/865.8 kB 7.6 MB/s eta 0:00:00a 0:00:01\nInstalling collected packages: pyfiglet\nSuccessfully installed pyfiglet-0.8.post1\nNote: you may need to restart the kernel to use updated packages.\n\n\n\n\nCode\nimport pyfiglet\n\n# Text to be converted to ASCII art\ntext = \"First Post\"\n\n# Generate ASCII art\nascii_art = pyfiglet.figlet_format(text)\n\n# Print the ASCII art\nprint(ascii_art)\n\n\n _____ _          _     ____           _   \n|  ___(_)_ __ ___| |_  |  _ \\ ___  ___| |_ \n| |_  | | '__/ __| __| | |_) / _ \\/ __| __|\n|  _| | | |  \\__ \\ |_  |  __/ (_) \\__ \\ |_ \n|_|   |_|_|  |___/\\__| |_|   \\___/|___/\\__|\n                                           \n\n\n\n\n\n\nBunny"
-  },
-  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "epinzur.github.io",
     "section": "",
-    "text": "Intro to Fine-Tuning Large Language Models (LLMs)\n\n\nData Science for non Data Scientists\n\n\n\n\nfew-shot learning\n\n\nfine-tuning\n\n\ngen-ai\n\n\nkaskada\n\n\nllm\n\n\npython\n\n\nopen-ai\n\n\n \n\n\n\n\nSep 13, 2023\n\n\n20 min\n\n\n\n\n\n\n  \n\n\n\n\nFirst Post\n\n\n\n\n\n\n\nbunny\n\n\n \n\n\n\n\nSep 6, 2023\n\n\n1 min\n\n\n\n\n\n\nNo matching items"
+    "text": "Intro to Fine-Tuning Large Language Models (LLMs)\n\n\nData Science for non Data Scientists\n\n\n\n\nfew-shot learning\n\n\nfine-tuning\n\n\ngen-ai\n\n\nkaskada\n\n\nllm\n\n\npython\n\n\nopen-ai\n\n\n \n\n\n\n\nSep 13, 2023\n\n\n20 min\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "posts/001-openai-fine-tuning-1/post.html",

@@ -2,8 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
-      "/posts/001-openai-fine-tuning-1/post.html",
-      "/posts/000-first-notebook/first-notebook.html"
+      "/posts/001-openai-fine-tuning-1/post.html"
     ]
   }
 ]
