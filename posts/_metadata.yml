@@ -6,3 +6,9 @@ freeze: false
 
 # Enable banner style title blocks
 title-block-banner: true
+
+comments:
+  utterances:
+    repo: epinzur/epinzur.github.io
+    issue-term:  pathname
+    theme: "github-light"
