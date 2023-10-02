@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Eric’s Blog</title>
+<title>Data Science for Developers</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -74,9 +74,9 @@ ul.task-list li input[type="checkbox"] {
     }
 
     const options = {
-      valueNames: ['listing-image','listing-date','listing-title','listing-reading-time','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      valueNames: ['listing-image','listing-date','listing-title','listing-reading-time','listing-categories','listing-description',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
       
-      searchColumns: ["listing-date","listing-title","listing-author","listing-subtitle","listing-image","listing-description","listing-categories"],
+      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
     };
 
     window['quarto-listings'] = window['quarto-listings'] || {};
@@ -125,7 +125,7 @@ cookieconsent.run({
 <link rel="stylesheet" href="styles.css">
 <meta property="og:title" content="">
 <meta property="og:image" content="https://epinzur.github.io/posts/001-openai-fine-tuning-1/cover.png">
-<meta property="og:site-name" content="Eric's Blog">
+<meta property="og:site-name" content="Data Science for Developers">
 <meta property="og:image:height" content="315">
 <meta property="og:image:width" content="600">
 <meta name="twitter:title" content="">
@@ -143,7 +143,7 @@ cookieconsent.run({
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container">
     <a class="navbar-brand" href="./index.html">
-    <span class="navbar-title">Eric’s Blog</span>
+    <span class="navbar-title">Data Science for Developers</span>
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
@@ -190,18 +190,40 @@ cookieconsent.run({
 
 
 <div class="quarto-listing quarto-listing-container-default" id="listing-listing">
+<div class="listing-actions-group">
+   <div class="input-group input-group-sm quarto-listing-sort">
+     <span class="input-group-text"><i class="bi bi-sort-down"></i></span>
+     <select id="listing-listing-sort" class="form-select" aria-label="Order By" onchange="window['quarto-listings']['listing-listing'].sort(this.options[this.selectedIndex].value, { order: this.options[this.selectedIndex].getAttribute('data-direction')})">
+       <option value="" disabled="" selected="" hidden="">Order By</option>
+       <option value="index" data-direction="asc">Default</option>
+         <option value="listing-title" data-direction="asc">
+          Title
+        </option>
+         <option value="listing-date-sort" data-direction="asc">
+          Date - Oldest
+        </option>
+         <option value="listing-date-sort" data-direction="desc">
+          Date - Newest
+        </option>
+     </select>
+  </div>
+    <div class="input-group input-group-sm quarto-listing-filter">
+      <span class="input-group-text"><i class="bi bi-search"></i></span>
+      <input type="text" class="search form-control" placeholder="Filter">
+    </div>
+</div>
 <div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="few-shot learning,fine-tuning,gen-ai,kaskada,llm,python,open-ai" data-listing-date-sort="1694563200000" data-listing-file-modified-sort="1696258497079" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="20">
+<div class="quarto-post image-right" data-index="0" data-categories="few-shot learning,fine-tuning,gen-ai,kaskada,llm,python,open-ai" data-listing-date-sort="1694563200000" data-listing-file-modified-sort="1696261586622" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="20">
 <div class="thumbnail">
 <p><a href="./posts/001-openai-fine-tuning-1/post.html"> <img src="./posts/001-openai-fine-tuning-1/cover.png" class="thumbnail-image" alt="3d circuitry"> </a></p>
 </div>
 <div class="body">
 <a href="./posts/001-openai-fine-tuning-1/post.html">
 <h3 class="no-anchor listing-title">
-Intro to Fine-Tuning Large Language Models (LLMs)
+Intro to Fine-Tuning Large Language Models
 </h3>
 <div class="listing-subtitle">
-Data Science for non Data Scientists
+
 </div>
 </a>
 <div class="listing-categories">
@@ -227,7 +249,11 @@ python
 open-ai
 </div>
 </div>
-<a href="./posts/001-openai-fine-tuning-1/post.html"> </a>
+<a href="./posts/001-openai-fine-tuning-1/post.html">
+<div class="listing-description">
+<p>Discover how I navigate the complex world of large language model fine-tuning with a sprinkle of experimentation and a good deal of persistence. Learn from my real-world project on enhancing Slack conversations, as I share the importance of data quality in achieving better predictive outcomes.</p>
+</div>
+</a>
 </div>
 <div class="metadata">
 <a href="./posts/001-openai-fine-tuning-1/post.html">
