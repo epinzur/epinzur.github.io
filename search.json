@@ -4,12 +4,12 @@
     "href": "about.html",
     "title": "About",
     "section": "",
-    "text": "About this blog"
+    "text": "Hello! I’m Eric, a seasoned software developer based in the vibrant city of Berlin, Germany. I am currently dedicating my expertise to Datastax, working on the innovative Kaskada project. Kaskada is a pioneering streaming engine that bridges the gap between AI models and both real-time & historical data. It facilitates seamless interactions over databases, streaming data, and dynamically loaded data using Python. What excites me most is Kaskada’s flawless integration with Python’s robust ecosystem of AI/ML tooling, allowing for an end-to-end workflow from data loading, processing, to training and serving models, all in a unified environment.\nMy blog is a window into my journey exploring the potential of using Kaskada to fuel generative AI-based applications. With a particular emphasis on empowering individuals with limited Data Science background, I aim to demystify the realm of large language models (LLMs) and generative AI. My debut post, “Intro to Fine-Tuning Large Language Models - Data Science for non Data Scientists”, is a testament to this aspiration. Through my work on the BeepGPT project, I ventured into the domain of data science, unraveling the essence of fine-tuning LLMs to cater to specific real-time applications.\nOutside the technical world, my life revolves around the rhythmic beats of electronic music and the serene company of my rabbits. A fervent DJ, I’ve channeled my creative energy into designing and building my own DJ controller—a journey I look forward to sharing in upcoming posts.\nWith a strong foundation in software development and infrastructure, coupled with an insatiable curiosity, I invite you to join me on an journey of discovery and innovation at the interection of data science and generative AI."
   },
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "epinzur.github.io",
+    "title": "Eric's Blog",
     "section": "",
     "text": "Intro to Fine-Tuning Large Language Models (LLMs)\n\n\nData Science for non Data Scientists\n\n\n\n\nfew-shot learning\n\n\nfine-tuning\n\n\ngen-ai\n\n\nkaskada\n\n\nllm\n\n\npython\n\n\nopen-ai\n\n\n \n\n\n\n\nSep 13, 2023\n\n\n20 min\n\n\n\n\n\n\nNo matching items"
   },
