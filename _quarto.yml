@@ -2,7 +2,7 @@ project:
   type: website
 
 website:
-  title: "epinzur.github.io"
+  title: "Eric's Blog"
   cookie-consent: true
   google-analytics: "G-0TFWEQ26VG"
   navbar:
@@ -12,6 +12,7 @@ website:
         href: https://github.com/epinzur
       - icon: linkedin
         href: https://www.linkedin.com/in/epinzur
+  favicon: images/favicon.ico
   open-graph: true
   twitter-card: true
 format:
