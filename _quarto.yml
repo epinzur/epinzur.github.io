@@ -3,6 +3,7 @@ project:
 
 website:
   title: "Eric's Blog"
+  site-url: "https://epinzur.github.io"
   cookie-consent: true
   google-analytics: "G-0TFWEQ26VG"
   navbar:
