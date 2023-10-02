@@ -1,1 +1,1 @@
-Sitemap: https://github.com/epinzur/epinzur.github.io/sitemap.xml
+Sitemap: https://epinzur.github.io/sitemap.xml
