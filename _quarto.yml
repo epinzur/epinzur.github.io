@@ -12,6 +12,8 @@ website:
         href: https://github.com/epinzur
       - icon: linkedin
         href: https://www.linkedin.com/in/epinzur
+  open-graph: true
+  twitter-card: true
 format:
   html:
     theme: cosmo
